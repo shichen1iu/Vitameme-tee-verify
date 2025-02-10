@@ -1,0 +1,18 @@
+[package]
+name = "tee-verify"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+tokio = { version = "1.38", features = ["full"] }
+serde = { version = "1.0", features = ["derive"] }
+axum = { version = "0.7", features = ["tokio", "http1", "macros"] }
+serde_json = { version = "1.0" }
+regex = { version = "1.10" }
+p256 = { version = "0.13", features = ["ecdsa"] }
+hex = { version = "0.4" }
+rand_core = { version = "0.6" }
+ed25519-dalek = "2.1.1"
+bs58 = "0.5.1"
+tracing = { version = "0.1" }
+tracing-subscriber = { version = "0.3", features = ["env-filter"] }
