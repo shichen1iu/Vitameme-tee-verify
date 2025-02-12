@@ -3,12 +3,12 @@ use crate::utils::deserialize_message::*;
 use crate::utils::find_spec_attribute::*;
 use crate::utils::verify_signature::*;
 
-use super::generate_redemcode_and_sign::*;
+use super::generate_redeemcode_and_sign::*;
 
 pub fn verify_and_sign(
     author_data_message: &str,
     post_data_message: &str,
-) -> Result<SignedRedemcode, ApiError> {
+) -> Result<Signedredeemcode, ApiError> {
     let post_data: VitaSignedSession = deserialize_message(post_data_message)?;
     let author_data: VitaSignedSession = deserialize_message(author_data_message)?;
 
@@ -43,7 +43,11 @@ pub fn verify_and_sign(
     let mut is_valid = true;
 
     for attribute in &post_attributes {
-        let is_valid_ = verify_signature(&attribute.attribute_hex, &attribute.attribute_name, &attribute.signature)?;
+        let is_valid_ = verify_signature(
+            &attribute.attribute_hex,
+            &attribute.attribute_name,
+            &attribute.signature,
+        )?;
 
         if !is_valid_ {
             is_valid = false;
@@ -75,6 +79,6 @@ pub fn verify_and_sign(
         return Err(ApiError::InvalidMessage("Invalid author".to_string()));
     }
 
-    let signed_redemcode = generate_redemcode_and_sign(&post_attributes)?;
-    Ok(signed_redemcode)
+    let signed_redeemcode = generate_redeemcode_and_sign(&post_attributes)?;
+    Ok(signed_redeemcode)
 }

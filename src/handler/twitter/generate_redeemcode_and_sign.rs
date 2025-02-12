@@ -8,12 +8,12 @@ use serde::Serialize;
 const CLIENT: &str = "twitter";
 
 #[derive(Debug, Serialize, Deserialize)]
-pub struct SignedRedemcode {
-    pub redemcode: String,
+pub struct Signedredeemcode {
+    pub redeemcode: String,
     pub signature: String,
 }
 
-pub fn generate_redemcode_and_sign(attributes: &[Attribute]) -> Result<SignedRedemcode, ApiError> {
+pub fn generate_redeemcode_and_sign(attributes: &[Attribute]) -> Result<Signedredeemcode, ApiError> {
     let bookmark_count = find_bookmark_count_attribute(attributes)?;
     let favorite_count = find_favorite_count_attribute(attributes)?;
     let retweet_count = find_retweet_count_attribute(attributes)?;
@@ -30,7 +30,7 @@ pub fn generate_redemcode_and_sign(attributes: &[Attribute]) -> Result<SignedRed
 
     let ca = extract_ca(&content)?;
 
-    let redemcode = format!(
+    let redeemcode = format!(
         "{}-{}-{}-{}-{}",
         CURRENT_VERSION, CLIENT, post_id, ca, engagement
     );
@@ -50,12 +50,12 @@ pub fn generate_redemcode_and_sign(attributes: &[Attribute]) -> Result<SignedRed
 
     let signing_key = SigningKey::from_keypair_bytes(&key_bytes.try_into().unwrap()).unwrap();
 
-    // 3. 对 redemcode 进行签名
-    let signature_hex = signing_key.sign(redemcode.as_bytes());
+    // 3. 对 redeemcode 进行签名
+    let signature_hex = signing_key.sign(redeemcode.as_bytes());
     let signature_hex_low = format!("{:x}", signature_hex);
 
-    Ok(SignedRedemcode {
-        redemcode,
+    Ok(Signedredeemcode {
+        redeemcode,
         signature: signature_hex_low,
     })
 }
@@ -65,7 +65,7 @@ mod tests {
     use super::*;
 
     #[test]
-    fn test_generate_redemcode_and_sign() {
+    fn test_generate_redeemcode_and_sign() {
         let attributes = vec![
             Attribute {
             attribute_hex: "617574686f723a20223132343836363830363531343839373330363122".to_string(),
@@ -104,7 +104,7 @@ mod tests {
             },
         ];
 
-        let redemcode = generate_redemcode_and_sign(&attributes).unwrap();
-        println!("redemcode: {:?}", redemcode);
+        let redeemcode = generate_redeemcode_and_sign(&attributes).unwrap();
+        println!("redeemcode: {:?}", redeemcode);
     }
 }
