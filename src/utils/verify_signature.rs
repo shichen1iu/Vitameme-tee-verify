@@ -16,21 +16,26 @@ pub fn verify_signature(
 
     if attribute_name_hex != attribute_hex {
         return Err(ApiError::InvalidMessage(
-            "attribute_name_hex not match attribute_hex".to_string(),
+            "Invalid signature verification request".to_string(),
         ));
     }
 
     //signature
-    let signature_bytes =
-        hex::decode(signature).map_err(|e| ApiError::SignatureError(e.to_string()))?;
+    let signature_bytes = hex::decode(signature).map_err(|_| {
+        ApiError::SignatureError("Invalid signature format: must be a valid hex string".to_string())
+    })?;
     // println!("signature_bytes: {:?}", signature_bytes);
 
-    let signature = Signature::from_slice(&signature_bytes)
-        .map_err(|e| ApiError::SignatureError(e.to_string()))?;
+    let signature = Signature::from_slice(&signature_bytes).map_err(|_| {
+        ApiError::SignatureError(
+            "Invalid signature format: signature length or format is incorrect".to_string(),
+        )
+    })?;
 
     //message
-    let application_data =
-        hex::decode(attribute_hex).map_err(|e| ApiError::SignatureError(e.to_string()))?;
+    let application_data = hex::decode(attribute_hex).map_err(|_| {
+        ApiError::SignatureError("Invalid message format: must be a valid hex string".to_string())
+    })?;
 
     //当前的写法是从私钥获取verifying key , 因为esper提供的公钥私钥不匹配
     let verifying_key = VerifyingKey::from(notary_private_key());
@@ -43,18 +48,12 @@ pub fn verify_signature(
 
 /// 返回保存的公钥
 fn _notary_pubkey() -> p256::PublicKey {
-    let pem_file = str::from_utf8(include_bytes!(
-        "../notary/notary.pub"
-    ))
-    .unwrap();
+    let pem_file = str::from_utf8(include_bytes!("../notary/notary.pub")).unwrap();
     p256::PublicKey::from_public_key_pem(pem_file).unwrap()
 }
 
 fn notary_private_key() -> p256::ecdsa::SigningKey {
-    let pem_file = str::from_utf8(include_bytes!(
-        "../notary/notary.key"
-    ))
-    .unwrap();
+    let pem_file = str::from_utf8(include_bytes!("../notary/notary.key")).unwrap();
     let private_key = p256::ecdsa::SigningKey::from_pkcs8_pem(pem_file).unwrap();
     private_key
 }

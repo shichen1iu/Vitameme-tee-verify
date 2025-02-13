@@ -2,14 +2,14 @@ use regex::Regex;
 
 use crate::error::ApiError;
 
-//todo : 获取ca的正则需要改
 pub fn extract_ca(text: &str) -> Result<String, ApiError> {
     let re =
-        Regex::new(r"(?i)ca\s*:\s*((?:0x[a-fA-F0-9]{40}|[1-9A-HJ-NP-Za-km-z]{44})\b)").unwrap();
+        Regex::new(r"(?i)ca\s*:\s*(?:\r?\n\s*)*((?:0x[a-fA-F0-9]{40}|[1-9A-HJ-NP-Za-km-z]{44})\b)")
+            .unwrap();
     re.captures(text)
         .and_then(|caps| caps.get(1))
         .map(|m| m.as_str().to_string())
-        .ok_or_else(|| ApiError::NotFound("ca not found".to_string()))
+        .ok_or_else(|| ApiError::NotFound("CA not found in the message".to_string()))
 }
 
 #[test]
@@ -70,5 +70,19 @@ fn test_extract_ca() {
     assert_eq!(
         extract_ca(text9).unwrap(),
         "0x85e58d0f9152669083bda1e6638fa6400898d0ee"
+    );
+
+    // 测试换行的情况
+    let text10 = "Test CA:\n6p6xgHyF7AeE6TZkSmFsko444wqoP15icUSqi2jfGiPN";
+    assert_eq!(
+        extract_ca(text10).unwrap(),
+        "6p6xgHyF7AeE6TZkSmFsko444wqoP15icUSqi2jfGiPN"
+    );
+
+    // 测试换行加空格的情况
+    let text11 = "Test CA:\n  6p6xgHyF7AeE6TZkSmFsko444wqoP15icUSqi2jfGiPN";
+    assert_eq!(
+        extract_ca(text11).unwrap(),
+        "6p6xgHyF7AeE6TZkSmFsko444wqoP15icUSqi2jfGiPN"
     );
 }

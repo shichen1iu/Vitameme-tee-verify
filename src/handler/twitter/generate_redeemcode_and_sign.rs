@@ -13,7 +13,9 @@ pub struct Signedredeemcode {
     pub signature: String,
 }
 
-pub fn generate_redeemcode_and_sign(attributes: &[Attribute]) -> Result<Signedredeemcode, ApiError> {
+pub fn generate_redeemcode_and_sign(
+    attributes: &[Attribute],
+) -> Result<Signedredeemcode, ApiError> {
     let bookmark_count = find_bookmark_count_attribute(attributes)?;
     let favorite_count = find_favorite_count_attribute(attributes)?;
     let retweet_count = find_retweet_count_attribute(attributes)?;

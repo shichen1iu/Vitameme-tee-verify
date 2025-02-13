@@ -28,14 +28,18 @@ pub fn verify_and_sign(
 
     if post_application_data.is_empty() || author_application_data.is_empty() {
         return Err(ApiError::InvalidMessage(
-            "No application data found".to_string(),
+            "Missing required message data".to_string(),
         ));
     }
     if post_signature.is_empty() || author_signature.is_empty() {
-        return Err(ApiError::InvalidMessage("No signature found".to_string()));
+        return Err(ApiError::InvalidMessage(
+            "Missing digital signature".to_string(),
+        ));
     }
     if post_attributes.is_empty() || author_attributes.is_empty() {
-        return Err(ApiError::InvalidMessage("No attributes found".to_string()));
+        return Err(ApiError::InvalidMessage(
+            "Missing message attributes".to_string(),
+        ));
     }
 
     // let decoded_data = decode_app_data(&post_application_data);
@@ -69,14 +73,18 @@ pub fn verify_and_sign(
     }
 
     if !is_valid {
-        return Err(ApiError::InvalidMessage("Invalid signature".to_string()));
+        return Err(ApiError::InvalidMessage(
+            "Message verification failed: signature is not valid".to_string(),
+        ));
     }
 
-    let post_auhtor_id = find_author_attribute(&post_attributes).expect("No author id found");
-    let author_id = find_author_attribute(&author_attributes).expect("No author id found");
+    let post_auhtor_id = find_author_attribute(&post_attributes)?;
+    let author_id = find_author_attribute(&author_attributes)?;
 
     if post_auhtor_id != author_id {
-        return Err(ApiError::InvalidMessage("Invalid author".to_string()));
+        return Err(ApiError::InvalidMessage(
+            "Author verification failed: post author does not match provided author".to_string(),
+        ));
     }
 
     let signed_redeemcode = generate_redeemcode_and_sign(&post_attributes)?;

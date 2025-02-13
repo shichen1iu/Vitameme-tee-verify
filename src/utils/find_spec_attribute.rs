@@ -17,7 +17,7 @@ pub fn find_content_attribute(attributes: &[Attribute]) -> Result<String, ApiErr
                 .to_string();
             content
         })
-        .ok_or_else(|| ApiError::NotFound("content attribute not found".to_string()))
+        .ok_or_else(|| ApiError::NotFound("Message content is missing".to_string()))
 }
 
 pub fn find_author_attribute(attributes: &[Attribute]) -> Result<String, ApiError> {
@@ -33,7 +33,7 @@ pub fn find_author_attribute(attributes: &[Attribute]) -> Result<String, ApiErro
                 .trim_matches('"') // 移除引号
                 .to_string()
         })
-        .ok_or_else(|| ApiError::NotFound("author attribute not found".to_string()))
+        .ok_or_else(|| ApiError::NotFound("Author information is missing".to_string()))
 }
 
 pub fn find_post_id_attribute(attributes: &[Attribute]) -> Result<String, ApiError> {
@@ -49,7 +49,7 @@ pub fn find_post_id_attribute(attributes: &[Attribute]) -> Result<String, ApiErr
                 .trim_matches('"') // 移除引号
                 .to_string()
         })
-        .ok_or_else(|| ApiError::NotFound("post_id attribute not found".to_string()))
+        .ok_or_else(|| ApiError::NotFound("Post ID is missing".to_string()))
 }
 
 pub fn find_bookmark_count_attribute(attributes: &[Attribute]) -> Result<String, ApiError> {
@@ -65,7 +65,7 @@ pub fn find_bookmark_count_attribute(attributes: &[Attribute]) -> Result<String,
                 .trim_matches('"')
                 .to_string()
         })
-        .ok_or_else(|| ApiError::NotFound("bookmark_count attribute not found".to_string()))
+        .ok_or_else(|| ApiError::NotFound("Bookmark count is missing".to_string()))
 }
 
 pub fn find_favorite_count_attribute(attributes: &[Attribute]) -> Result<String, ApiError> {
@@ -81,7 +81,7 @@ pub fn find_favorite_count_attribute(attributes: &[Attribute]) -> Result<String,
                 .trim_matches('"') // 移除引号
                 .to_string()
         })
-        .ok_or_else(|| ApiError::NotFound("favorite_count attribute not found".to_string()))
+        .ok_or_else(|| ApiError::NotFound("Like count is missing".to_string()))
 }
 
 pub fn find_retweet_count_attribute(attributes: &[Attribute]) -> Result<String, ApiError> {
@@ -97,7 +97,7 @@ pub fn find_retweet_count_attribute(attributes: &[Attribute]) -> Result<String, 
                 .trim_matches('"') // 移除引号
                 .to_string()
         })
-        .ok_or_else(|| ApiError::NotFound("retweet_count attribute not found".to_string()))
+        .ok_or_else(|| ApiError::NotFound("Share count is missing".to_string()))
 }
 
 #[test]

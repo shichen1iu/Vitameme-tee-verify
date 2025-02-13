@@ -40,8 +40,9 @@ pub struct Attribute {
 }
 
 pub fn deserialize_message(message: &str) -> Result<VitaSignedSession, ApiError> {
-    let vita_signed_session: VitaSignedSession =
-        serde_json::from_str(message).map_err(|e| ApiError::InvalidMessage(e.to_string()))?;
+    let vita_signed_session: VitaSignedSession = serde_json::from_str(message).map_err(|_| {
+        ApiError::InvalidMessage("Invalid message format: please check your input".to_string())
+    })?;
     Ok(vita_signed_session)
 }
 
