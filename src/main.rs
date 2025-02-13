@@ -21,7 +21,7 @@ struct ApiResponse<T> {
 async fn main() {
     let app = Router::new().route("/verify", post(verify_handler));
 
-    let listener = tokio::net::TcpListener::bind("0.0.0.0:5000").await.unwrap();
+    let listener = tokio::net::TcpListener::bind("0.0.0.0:7049").await.unwrap();
     println!("listening on {}", listener.local_addr().unwrap());
     axum::serve(listener, app).await.unwrap();
 }

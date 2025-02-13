@@ -3,13 +3,14 @@ use regex::Regex;
 use crate::error::ApiError;
 
 pub fn extract_ca(text: &str) -> Result<String, ApiError> {
-    let re =
-        Regex::new(r"(?i)ca\s*:\s*(?:\r?\n\s*)*((?:0x[a-fA-F0-9]{40}|[1-9A-HJ-NP-Za-km-z]{44})\b)")
-            .unwrap();
+    let re = Regex::new(
+        r"(?i)ca\s*:\s*(?:\\n\s*|\r?\n\s*)*((?:0x[a-fA-F0-9]{40}|[1-9A-HJ-NP-Za-km-z]{44})\b)",
+    )
+    .unwrap();
     re.captures(text)
         .and_then(|caps| caps.get(1))
         .map(|m| m.as_str().to_string())
-        .ok_or_else(|| ApiError::NotFound("CA not found in the message".to_string()))
+        .ok_or_else(|| ApiError::NotFound("CA address not found in the message".to_string()))
 }
 
 #[test]
@@ -84,5 +85,19 @@ fn test_extract_ca() {
     assert_eq!(
         extract_ca(text11).unwrap(),
         "6p6xgHyF7AeE6TZkSmFsko444wqoP15icUSqi2jfGiPN"
+    );
+
+    let test12 =
+        "test message\nCA:\\n6p6xgHyF7AeE6TZkSmFsko444wgoP15icUsgi2jfGiPN\\n\\ntest test test";
+    assert_eq!(
+        extract_ca(test12).unwrap(),
+        "6p6xgHyF7AeE6TZkSmFsko444wgoP15icUsgi2jfGiPN"
+    );
+
+    let test13 =
+        "test message\nCA:\\n0x85e58d0f9152669083bda1e6638fa6400898d0ee\\n\\ntest test test";
+    assert_eq!(
+        extract_ca(test13).unwrap(),
+        "0x85e58d0f9152669083bda1e6638fa6400898d0ee"
     );
 }
